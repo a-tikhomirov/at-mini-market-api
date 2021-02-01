@@ -50,7 +50,7 @@ mvn clean test allure:serve
 ### Информация по тестам
 <a name="Информация-по-тестам"></a>
 
-Декомпозиция тестиуемого фунционала" [Mind-map-image](https://drive.google.com/file/d/1PpDSsdEZwq4z2LD7PcPq5I9c7Sv52-or/view?usp=sharing)
+Декомпозиция тестиуемого фунционала: [Mind-map-image](https://drive.google.com/file/d/1PpDSsdEZwq4z2LD7PcPq5I9c7Sv52-or/view?usp=sharing)
 
 Сценарии тестирования расположены: `src/test/java/ru/at/mini/market/api/`  
 Один сценарий тестирования может иметь несколько наборов тестовых данных. Такие сценарии будут запускаться несколько раз (по числу тестовых наборов)  
