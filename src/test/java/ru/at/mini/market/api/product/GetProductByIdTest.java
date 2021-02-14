@@ -20,17 +20,15 @@ public class GetProductByIdTest extends Base {
     @SneakyThrows
     @Test
     void productGetByIdPositiveTest() {
-        Response<Product> createResponse = createProduct();
-        assertThat(createResponse.body()).isNotNull();
-        Product product = createResponse.body();
-        Response<Product> getResponse = productService.getProductById(product.getId()).execute();
+        int productId = dbCreateProduct();
+        Product product = dbGetProductById(productId);
+        Response<Product> getResponse = productService.getProductById(productId).execute();
         assertThat(getResponse)
                 .satisfies(r -> assertThat(r.code()).isEqualTo(200))
                 .satisfies(r -> assertThat(r.body()).isNotNull()
                         .satisfies(body -> assertThat(body).isEqualTo(product))
                 );
-        Response<ResponseBody> deleteResponse =  deleteProduct(product.getId());
-        assertThat(deleteResponse.code()).isEqualTo(200);
+        dbDeleteProduct(productId);
     }
 
     @DisplayName("Product GET: by id - negative: wrong id")
@@ -38,12 +36,9 @@ public class GetProductByIdTest extends Base {
     @Test
     @Issue("wrong.status.code")
     public void productGetByIdWrongIdNegativeTest() {
-        Response<Product> createResponse = createProduct();
-        assertThat(createResponse.body()).isNotNull();
-        Product product = createResponse.body();
-        Response<ResponseBody> deleteResponse =  deleteProduct(product.getId());
-        assertThat(deleteResponse.code()).isEqualTo(200);
-        Response<Product> getResponse =  productService.getProductById(product.getId()).execute();
+        int productId = dbCreateProduct();
+        dbDeleteProduct(productId);
+        Response<Product> getResponse =  productService.getProductById(productId).execute();
         assertThat(getResponse.code()).isEqualTo(404);
     }
 

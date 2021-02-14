@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <classPathEntry
+            location="lib/postgresql-42.2.18.jar"/>
+
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <jdbcConnection driverClass="org.postgresql.Driver"
+                        connectionURL="jdbc:postgresql://80.78.248.82:5434/coursedb"
+                        userId="postgres"
+                        password="postgres">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <javaModelGenerator targetPackage="ru.at.mini.market.api.db.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <sqlMapGenerator targetPackage="ru.at.mini.market.api.db.mapper.xml" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <javaClientGenerator type="XMLMAPPER" targetPackage="ru.at.mini.market.api.db.dao"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <table tableName="categories">
+            <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="id" sqlStatement="DB2" identity="true"/>
+            <!--                        <columnOverride column="id" property="category_id" />-->
+            <!--                        <ignoreColumn column="FRED" />-->
+            <!--                        <columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />-->
+        </table>
+        <table tableName="products">
+            <property name="useActualColumnNames" value="true"/>
+            <generatedKey column="id" sqlStatement="DB2" identity="true"/>
+            <!--            <columnOverride column="DATE_FIELD" property="startDate" />-->
+            <!--            <ignoreColumn column="FRED" />-->
+            <!--            <columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />-->
+        </table>
+    </context>
+</generatorConfiguration>

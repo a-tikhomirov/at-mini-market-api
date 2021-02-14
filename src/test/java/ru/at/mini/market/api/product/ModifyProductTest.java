@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,9 +14,6 @@ import ru.at.mini.market.api.base.Base;
 import ru.at.mini.market.api.base.enums.Category;
 import ru.at.mini.market.api.dto.Product;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,9 +27,7 @@ public class ModifyProductTest extends Base {
 
     @BeforeEach
     void createNewProduct() {
-        Response<Product> createResponse = createProduct();
-        assertThat(createResponse.body()).isNotNull();
-        productId = createResponse.body().getId();
+        productId = dbCreateProduct();
     }
 
 
@@ -49,6 +43,10 @@ public class ModifyProductTest extends Base {
                 .satisfies(r -> assertThat(r.body()).isNotNull()
                         .satisfies(body -> assertThat(body).isEqualTo(product))
                 );
+        if (response.body() != null) {
+            Product productFromDb = dbGetProductById(product.getId());
+            assertThat(response.body()).isEqualTo(productFromDb);
+        }
     }
 
     private static Stream<Arguments> getInvalidProducts() {
@@ -62,7 +60,7 @@ public class ModifyProductTest extends Base {
                         .withId(null)
                         .withTitle(faker.lorem().word())
                         .withPrice(faker.number().numberBetween(1 , Integer.MAX_VALUE - 1))
-                        .withCategoryTitle(Category.ELECTRONICS.title), 400),
+                        .withCategoryTitle(Category.ELECTRONIC.title), 400),
                 Arguments.of(new Product()
                         .withId(0)
                         .withTitle(faker.lorem().word())
@@ -72,7 +70,7 @@ public class ModifyProductTest extends Base {
                         .withId(0)
                         .withTitle(faker.lorem().fixedString(512))
                         .withPrice(faker.number().numberBetween(1 , Integer.MAX_VALUE - 1))
-                        .withCategoryTitle(Category.ELECTRONICS.title), 500),
+                        .withCategoryTitle(Category.ELECTRONIC.title), 500),
                 Arguments.of(new Product()
                         .withId(0)
                         .withTitle(loadProperty("text.special.chars"))
@@ -87,17 +85,17 @@ public class ModifyProductTest extends Base {
                         .withId(0)
                         .withTitle(null)
                         .withPrice(faker.number().numberBetween(1 , Integer.MAX_VALUE - 1))
-                        .withCategoryTitle(Category.ELECTRONICS.title), 400),
+                        .withCategoryTitle(Category.ELECTRONIC.title), 400),
                 Arguments.of(new Product()
                         .withId(0)
                         .withTitle(faker.lorem().word())
                         .withPrice(faker.number().numberBetween(Integer.MIN_VALUE, -1))
-                        .withCategoryTitle(Category.ELECTRONICS.title), 400),
+                        .withCategoryTitle(Category.ELECTRONIC.title), 400),
                 Arguments.of(new Product()
                         .withId(0)
                         .withTitle(faker.lorem().word())
                         .withPrice(0)
-                        .withCategoryTitle(Category.ELECTRONICS.title), 400)
+                        .withCategoryTitle(Category.ELECTRONIC.title), 400)
         );
     }
 
@@ -122,10 +120,6 @@ public class ModifyProductTest extends Base {
 
     @AfterEach
     void deleteProduct() {
-        try {
-            productService.deleteProduct(productId).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        dbDeleteProduct(productId);
     }
 }

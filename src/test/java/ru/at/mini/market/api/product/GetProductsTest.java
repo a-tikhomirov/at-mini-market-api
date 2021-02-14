@@ -1,45 +1,30 @@
 package ru.at.mini.market.api.product;
 
 import io.qameta.allure.Feature;
-import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import retrofit2.Response;
 import ru.at.mini.market.api.base.Base;
-import ru.at.mini.market.api.base.enums.Category;
+import ru.at.mini.market.api.db.model.ProductsExample;
 import ru.at.mini.market.api.dto.Product;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.at.mini.market.api.dto.DbRetrofitMapper.getProductsListFromDbProducts;
 
 @Feature(value = "Product GET: all products")
 @DisplayName("Product GET: all products")
 public class GetProductsTest extends Base {
 
     List<Product> products = new ArrayList<>();
+    List<Integer> toDelete = new ArrayList<>();
 
     @BeforeEach
     void addProducts() {
-        products.add(new Product()
-                .withTitle(faker.food().ingredient())
-                .withPrice(faker.number().numberBetween(1, 100))
-                .withCategoryTitle(Category.FOOD.title));
-        products.add(new Product()
-                .withTitle(faker.app().name())
-                .withPrice(faker.number().numberBetween(100, 1000))
-                .withCategoryTitle(Category.ELECTRONICS.title));
-        products.forEach(product -> {
-            try {
-                Response<Product> response = productService.createProduct(product).execute();
-                assertThat(response.body()).isNotNull();
-                product.setId(response.body().getId());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        getValidProducts().forEach(product -> toDelete.add(dbCreateProduct(product)));
+        products = getProductsListFromDbProducts(productsMapper.selectByExample(new ProductsExample()));
     }
 
     @DisplayName("Product GET: all products")
@@ -63,13 +48,7 @@ public class GetProductsTest extends Base {
 
     @AfterEach
     void deleteProducts() {
-        products.forEach(product -> {
-            try {
-                productService.deleteProduct(product.getId()).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        toDelete.forEach(this::dbDeleteProduct);
     }
 
 }

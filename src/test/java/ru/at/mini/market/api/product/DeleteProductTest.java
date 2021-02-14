@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import retrofit2.Response;
 import ru.at.mini.market.api.base.Base;
-import ru.at.mini.market.api.dto.Product;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,9 +19,8 @@ public class DeleteProductTest extends Base {
     @SneakyThrows
     @Test
     void productDeletePositiveTest() {
-        Response<Product> createResponse = createProduct();
-        assertThat(createResponse.body()).isNotNull();
-        Response<ResponseBody> deleteResponse =  deleteProduct(createResponse.body().getId());
+        int productId = dbCreateProduct();
+        Response<ResponseBody> deleteResponse =  productService.deleteProduct(productId).execute();
         assertThat(deleteResponse.code()).isEqualTo(200);
     }
 
@@ -35,18 +33,16 @@ public class DeleteProductTest extends Base {
     @SneakyThrows
     @Test
     public void productDeleteWrongIdNegativeTest() {
-        Response<Product> createResponse = createProduct();
-        assertThat(createResponse.body()).isNotNull();
-        Response<ResponseBody> deleteResponse =  deleteProduct(createResponse.body().getId());
-        assertThat(deleteResponse.code()).isEqualTo(200);
-        deleteResponse =  productService.deleteProduct(createResponse.body().getId()).execute();
+        int productId = dbCreateProduct();
+        dbDeleteProduct(productId);
+        Response<ResponseBody> deleteResponse =  productService.deleteProduct(productId).execute();
         assertThat(deleteResponse.code()).isEqualTo(404);
     }
 
     @DisplayName("Product DELETE - negative: illegal type id")
     @SneakyThrows
     @Test
-    public void dproductDeleteIllegalTypeIdNegativeTest() {
+    public void productDeleteIllegalTypeIdNegativeTest() {
         Response<ResponseBody> deleteResponse = productService.deleteProduct(faker.lorem().fixedString(1)).execute();
         assertThat(deleteResponse.code()).isEqualTo(400);
     }

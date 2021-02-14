@@ -13,7 +13,6 @@ import ru.at.mini.market.api.base.Base;
 import ru.at.mini.market.api.base.enums.Category;
 import ru.at.mini.market.api.dto.Product;
 
-import java.io.IOException;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +40,8 @@ public class CreateProductTest extends Base {
                 );
         if (response.body() != null) {
             idToDelete = response.body().getId();
+            Product productFromDb = dbGetProductById(idToDelete);
+            assertThat(response.body()).isEqualTo(productFromDb);
         } else idToDelete = null;
     }
 
@@ -58,7 +59,7 @@ public class CreateProductTest extends Base {
                 Arguments.of(new Product()
                         .withTitle(faker.lorem().fixedString(512))
                         .withPrice(faker.number().numberBetween(1 , Integer.MAX_VALUE - 1))
-                        .withCategoryTitle(Category.ELECTRONICS.title), 500),
+                        .withCategoryTitle(Category.ELECTRONIC.title), 500),
                 Arguments.of(new Product()
                         .withTitle(loadProperty("text.special.chars"))
                         .withPrice(faker.number().numberBetween(1 , Integer.MAX_VALUE - 1))
@@ -70,15 +71,15 @@ public class CreateProductTest extends Base {
                 Arguments.of(new Product()
                         .withTitle(null)
                         .withPrice(faker.number().numberBetween(1 , Integer.MAX_VALUE - 1))
-                        .withCategoryTitle(Category.ELECTRONICS.title), 400),
+                        .withCategoryTitle(Category.ELECTRONIC.title), 400),
                 Arguments.of(new Product()
                         .withTitle(faker.lorem().word())
                         .withPrice(faker.number().numberBetween(Integer.MIN_VALUE, -1))
-                        .withCategoryTitle(Category.ELECTRONICS.title), 400),
+                        .withCategoryTitle(Category.ELECTRONIC.title), 400),
                 Arguments.of(new Product()
                         .withTitle(faker.lorem().word())
                         .withPrice(0)
-                        .withCategoryTitle(Category.ELECTRONICS.title), 400)
+                        .withCategoryTitle(Category.ELECTRONIC.title), 400)
         );
     }
 
@@ -103,12 +104,8 @@ public class CreateProductTest extends Base {
 
     @AfterEach
     public void deleteProduct() {
-        try {
-            if (idToDelete != null) {
-                productService.deleteProduct(idToDelete).execute();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (idToDelete != null) {
+            dbDeleteProduct(idToDelete);
         }
     }
 
