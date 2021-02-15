@@ -28,7 +28,7 @@
 <a name="Скачивание-и-запуск-проекта"></a>
 Возможно скачать архив или клонировать проект при наличии git.
 
-[Ссылка на скачивание архива](https://github.com/a-tikhomirov/at-mini-market-api/archive/master.zip)
+[Ссылка на скачивание архива](https://github.com/a-tikhomirov/at-rest-api/archive/lesson4-hw.zip)
 
 Команда для клонирования проекта:
 
