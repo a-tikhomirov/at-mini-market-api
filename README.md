@@ -35,7 +35,7 @@
 ```
 $ git clone https://github.com/a-tikhomirov/at-mini-market-api.git
 $ cd at-mini-market-api/
-$ git checkout lesson6-hw
+$ git checkout lesson06-hw
 ```
 
 Для запуска тестового набора необходимо в командной строке перейти в директорию проекта и выполнить команду:
